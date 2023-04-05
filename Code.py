@@ -1,7 +1,6 @@
 from tensorflow.python.keras.models import load_model
 import numpy as np
 import cv2
-from scipy.spatial import distance
 MIN_DISTANCE = 130
 model = load_model('masknet.h5')
 face_model = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -11,12 +10,6 @@ dist_label = {0:(0,255,0),1:(255,0,0)}
 def detect_mask_distance(gray):
     faces = face_model.detectMultiScale(gray,scaleFactor=1.1, minNeighbors=4) #returns a list of (x,y,w,h) tuples
     label = [0 for i in range(len(faces))]
-    for i in range(len(faces)-1):
-        for j in range(i+1, len(faces)):
-            dist = distance.euclidean(faces[i][:2],faces[j][:2])
-            if dist < MIN_DISTANCE:
-                label[i] = 1
-                label[j] = 1
     new_img = cv2.cvtColor(gray, cv2.COLOR_RGB2BGR) #colored output image
     for i in range(len(faces)):
         (x,y,w,h) = faces[i]
